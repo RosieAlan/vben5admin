@@ -51,7 +51,9 @@ function setupAccessGuard(router: Router) {
     const authStore = useAuthStore();
 
     // 基本路由，这些路由不需要进入权限拦截
+    console.log('to.namexxxx', to.name);
     if (coreRouteNames.includes(to.name as string)) {
+      console.log('coreRouteNames', coreRouteNames);
       if (to.path === LOGIN_PATH && accessStore.accessToken) {
         return decodeURIComponent(
           (to.query?.redirect as string) ||
@@ -62,27 +64,33 @@ function setupAccessGuard(router: Router) {
       return true;
     }
 
-    // accessToken 检查
+    // accessToken 检查 - 临时绕过登录检查
     if (!accessStore.accessToken) {
       // 明确声明忽略权限访问权限，则可以访问
+      console.log('to.meta', to.meta);
       if (to.meta.ignoreAccess) {
         return true;
       }
 
+      // 临时绕过登录检查，直接允许访问
+      console.log('绕过登录检查，直接访问:', to.path);
+      return true;
+
+      // 注释掉原来的登录跳转逻辑
       // 没有访问权限，跳转登录页面
-      if (to.fullPath !== LOGIN_PATH) {
-        return {
-          path: LOGIN_PATH,
-          // 如不需要，直接删除 query
-          query:
-            to.fullPath === preferences.app.defaultHomePath
-              ? {}
-              : { redirect: encodeURIComponent(to.fullPath) },
-          // 携带当前跳转的页面，登录后重新跳转该页面
-          replace: true,
-        };
-      }
-      return to;
+      // if (to.fullPath !== LOGIN_PATH) {
+      //   return {
+      //     path: LOGIN_PATH,
+      //     // 如不需要，直接删除 query
+      //     query:
+      //       to.fullPath === preferences.app.defaultHomePath
+      //         ? {}
+      //         : { redirect: encodeURIComponent(to.fullPath) },
+      //     // 携带当前跳转的页面，登录后重新跳转该页面
+      //     replace: true,
+      //   };
+      // }
+      // return to;
     }
 
     // 是否已经生成过动态路由
@@ -90,14 +98,28 @@ function setupAccessGuard(router: Router) {
       return true;
     }
 
-    // 生成路由表
+    // 生成路由表 - 临时绕过用户信息获取
     // 当前登录用户拥有的角色标识列表
-    const userInfo = userStore.userInfo || (await authStore.fetchUserInfo());
-    const userRoles = userInfo.roles ?? [];
+    let userInfo = userStore.userInfo;
+    if (!userInfo) {
+      // 临时创建默认用户信息，避免fetchUserInfo调用
+      userInfo = {
+        userId: '1',
+        username: 'temp-user',
+        realName: '临时用户',
+        avatar: '',
+        desc: '临时用户',
+        homePath: preferences.app.defaultHomePath,
+        token: 'fake-token-for-development',
+        roles: ['super'],
+      };
+      userStore.setUserInfo(userInfo);
+    }
+    // const userRoles = userInfo.roles ?? [];
 
     // 生成菜单和路由
     const { accessibleMenus, accessibleRoutes } = await generateAccess({
-      roles: userRoles,
+      roles: ['super'],
       router,
       // 则会在菜单中显示，但是访问会被重定向到403
       routes: accessRoutes,
@@ -109,7 +131,7 @@ function setupAccessGuard(router: Router) {
     accessStore.setIsAccessChecked(true);
     const redirectPath = (from.query.redirect ??
       (to.path === preferences.app.defaultHomePath
-        ? userInfo.homePath || preferences.app.defaultHomePath
+        ? userInfo!.homePath || preferences.app.defaultHomePath
         : to.fullPath)) as string;
 
     return {

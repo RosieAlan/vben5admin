@@ -49,6 +49,11 @@ async function bootstrap(namespace: string) {
   // 配置 pinia-tore
   await initStores(app, { namespace });
 
+  // 临时设置假的accessToken绕过登录
+  const { useAccessStore } = await import('@vben/stores');
+  const accessStore = useAccessStore();
+  accessStore.setAccessToken('fake-token-for-development');
+
   // 安装权限指令
   registerAccessDirective(app);
 

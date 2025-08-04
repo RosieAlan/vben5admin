@@ -4,7 +4,7 @@ import ElementPlus from 'unplugin-element-plus/vite';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-
+import path from 'path'
 export default defineConfig(async () => {
   return {
     application: {},
@@ -35,6 +35,11 @@ export default defineConfig(async () => {
       //   port: 5777,
       // },
       
+    },
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, './src'),
+      },
     },
   };
 });

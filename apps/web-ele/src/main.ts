@@ -2,7 +2,11 @@ import { initPreferences } from '@vben/preferences';
 import { unmountGlobalLoading } from '@vben/utils';
 
 import { overridesPreferences } from './preferences';
-
+import VScaleScreen from 'v-scale-screen'
+import { createApp } from 'vue';
+import App from './app.vue';
+const app = createApp(App);
+app.component('VScaleScreen', VScaleScreen);
 /**
  * 应用初始化完成之后再进行页面加载渲染
  */
@@ -26,6 +30,7 @@ async function initApplication() {
 
   // 移除并销毁loading
   unmountGlobalLoading();
+  // 初始化大屏适配
 }
 
 initApplication();

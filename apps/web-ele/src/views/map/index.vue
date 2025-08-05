@@ -1,29 +1,21 @@
-<template>
-  <v-scale-screen>
-    <div class="box">
-      <video style="width: 100%; height: 100%" muted loop autoplay>
-        <source src="../../../src/assets/dv-index-main.mp4" />
-      </video>
-      <div class="dv-index-main">
-        <div class="dv-btn-group">
-          <div
-            v-for="(item, index) in btnArr"
-            :key="index"
-            class="btn-item"
-            :class="[btnClassHandle(item.num)]"
-          >
-            <img :src="getImageUrl(item.url)" alt="" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </v-scale-screen>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
+
+import { preferences } from '@vben/preferences';
+
 import VScaleScreen from 'v-scale-screen';
 
+onMounted(() => {
+  window.dispatchEvent(new Event('resize'));
+});
+
+watch(
+  () => preferences.sidebar.collapsed,
+  () => {
+    // 处理逻辑
+    window.dispatchEvent(new Event('resize'));
+  },
+);
 const btnArr = ref([
   { num: 'one', url: '安全基础.png' },
   { num: 'two', url: '重大危险源.png' },
@@ -35,7 +27,6 @@ const getImageUrl = (url: string) => {
   try {
     return new URL(`/src/assets/images/${url}`, import.meta.url).href;
   } catch {
-    console.warn('图片路径错误:', url);
     return '';
   }
 };
@@ -43,6 +34,28 @@ const btnClassHandle = (key: string) => {
   return `btn-item-${key}`;
 };
 </script>
+
+<template>
+  <VScaleScreen>
+    <el-container>
+      <video style="width: 100%; height: 100%" muted loop autoplay>
+        <source src="../../../src/assets/dv-index-main.mp4" />
+      </video>
+      <div class="dv-index-main">
+        <div class="dv-btn-group">
+          <div
+            v-for="(item, index) in btnArr"
+            :key="index"
+            class="btn-item"
+            :class="[btnClassHandle(item.num)]"
+          >
+            <el-image :src="getImageUrl(item.url)" alt="" />
+          </div>
+        </div>
+      </div>
+    </el-container>
+  </VScaleScreen>
+</template>
 
 <style scoped lang="scss">
 .box {
@@ -72,7 +85,7 @@ const btnClassHandle = (key: string) => {
       width: 145px;
       height: 168px;
       cursor: pointer;
-      transition: transform .3s;
+      transition: transform 0.3s;
     }
 
     .btn-item-one {
@@ -95,10 +108,16 @@ const btnClassHandle = (key: string) => {
       right: 298px;
     }
 
-
     .btn-item:hover {
       transform: scale(1.2);
     }
   }
+}
+</style>
+<style scoped>
+.screen-wrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>

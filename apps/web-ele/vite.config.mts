@@ -9,6 +9,7 @@ export default defineConfig(async () => {
   return {
     application: {},
     vite: {
+      base: '/vue3/',
       plugins: [
         ElementPlus({
           format: 'esm',
@@ -41,5 +42,6 @@ export default defineConfig(async () => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    
   };
 });

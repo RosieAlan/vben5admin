@@ -61,6 +61,7 @@
     "@changesets/changelog-github": "catalog:",
     "@changesets/cli": "catalog:",
     "@playwright/test": "catalog:",
+    "@types/ali-oss": "^6.16.11",
     "@types/node": "catalog:",
     "@vben/commitlint-config": "workspace:*",
     "@vben/eslint-config": "workspace:*",
@@ -118,6 +119,7 @@
     ]
   },
   "dependencies": {
+    "ali-oss": "^6.23.0",
     "element-plus": "catalog:",
     "socket.io-client": "^4.8.1",
     "v-scale-screen": "2.0.0"

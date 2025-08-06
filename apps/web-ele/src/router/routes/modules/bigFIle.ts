@@ -5,15 +5,15 @@ import { $t } from '#/locales';
 const routes: RouteRecordRaw[] = [
   {
     meta: {
-      icon: 'lucide:file-text',
+      icon: 'lucide:package-plus',
       keepAlive: false,
       order: 1000,
-      title: $t('大文件上传'),
+      title: $t('异步组件&代码分包&suspense'),
       ignoreAccess: true,
     },
-    name: 'BigFile',
-    path: '/bigFile',
-    component: () => import('#/views/bigFile/index.vue'),
+    name: 'async',
+    path: '/async',
+    component: () => import('#/views/async/index.vue'),
   },
 ];
 

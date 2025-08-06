@@ -9,7 +9,7 @@ export default defineConfig(async () => {
   return {
     application: {},
     vite: {
-      base: '/vue3/',
+      base: '/',
       plugins: [
         ElementPlus({
           format: 'esm',
